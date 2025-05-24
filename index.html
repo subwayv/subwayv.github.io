@@ -24,10 +24,23 @@
     #cesiumContainer {
         height: 100%;
     }
+
+    #home {
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        background-color: #fff;
+        z-index: 999;
+        user-select: none;
+        cursor: pointer;
+    }
 </style>
 
 <body>
     <div id="cesiumContainer"></div>
+    <div id="home">🏠</div>
 
     <script>
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzljYzAwNi03MDM2LTRkNzAtOTU5MS1lMDk4ZDc4YjQyZTMiLCJpZCI6Mzc4NzAsImlhdCI6MTYwNTY2MjY1MH0.A7BBr5K2nZNRjJls6uFc5elvf5FMFWJuD6dozwLw5vY';
@@ -75,7 +88,7 @@
         })));
 
         //将初始视角定到扬州
-        viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 100000) });
+        back();
 
         // 管控区
         const option = {
@@ -137,7 +150,11 @@
 
 
 
+        document.getElementById('home').addEventListener('click', () => back());
 
+        function back() {
+            viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 100000) });
+        }
 
 
 
