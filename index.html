@@ -3,12 +3,101 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>cesium-helloworld</title>
+    <!-- cdn方式引入cesium -->
+    <script src="./cesium/Build/Cesium/Cesium.js"></script>
+    <link href="./cesium/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 </head>
 
+</head>
+<style>
+    /* 处理浏览器侧边距、滚动条 */
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+
+    }
+
+    /* cesium容器全屏 */
+    #cesiumContainer {
+
+        height: 100%;
+    }
+</style>
+
 <body>
-    <div>fEGGAEVBVRFBV</div>
+    <!-- cesium容器 -->
+    <div id="cesiumContainer"></div>
+    <script>
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzljYzAwNi03MDM2LTRkNzAtOTU5MS1lMDk4ZDc4YjQyZTMiLCJpZCI6Mzc4NzAsImlhdCI6MTYwNTY2MjY1MH0.A7BBr5K2nZNRjJls6uFc5elvf5FMFWJuD6dozwLw5vY';
+        //cesium设置项
+        let options = {
+            geocoder: false,   // 位置查找工具
+            homeButton: false,  // 视角返回初始位置
+            sceneModePicker: false,   // 选择视角的模式（球体、平铺、斜视平铺）
+            baseLayerPicker: false,    // 图层选择器（地形影像服务）
+            navigationHelpButton: false,   // 导航帮助
+            animation: false,   // 左下角仪表盘
+            timeline: false,   // 底部时间线
+            fullscreenButton: false,   // 全屏
+            infoBox: true,     //单击信息框
+            vrButton: false,  // VR
+            sceneMode: Cesium.SceneMode.SCENE2D
+            // terrainProvider: Cesium.createWorldTerrain()    //开启三维地形
+        };
+        //构建cesium基础应用
+        const viewer = new Cesium.Viewer('cesiumContainer', options);
+        //开启光照效果
+        viewer.scene.globe.enableLighting = false;
+        //去除版权信息
+        viewer.cesiumWidget.creditContainer.style.display = "none";
+        //将初始视角定到中国
+        viewer.camera.setView({
+            destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 2000),
+            orientation: {
+                heading: Cesium.Math.toRadians(348.4202942851978),
+                pitch: Cesium.Math.toRadians(-89.74026687972041),
+                roll: Cesium.Math.toRadians(0)
+            },
+        });
+
+        let tdtKey = 'b6b5170fae0041575cd409e2e372fb6d';
+        viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+            url: "http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=" + tdtKey,
+            layer: "tdtBasicLayer",
+            style: "default",
+            format: "image/jpeg",
+            tileMatrixSetID: "GoogleMapsCompatible",
+            show: false
+        }));
+        const gkq = viewer.dataSources.add(Cesium.KmlDataSource.load('./生态空间管控区.kml', {
+            camera: viewer.scene.camera,
+            canvas: viewer.scene.canvas,
+            clampToGround: true
+        }));
+        // 获取所有从KML加载的实体
+        const entities = gkq.entities.values;
+        console.log(entities);
+        
+
+        // 遍历每个实体进行样式更改
+        for (let i = 0; i < entities.length; i++) {
+            const entity = entities[i];
+            console.log(i);
+            
+
+            if (entity.polygon) { // 检查实体是否包含多边形
+                // 创建新的材料实例
+                const material = Cesium.Color.RED.withAlpha(0.5); // 示例为红色半透明材质
+
+                // 设置多边形的材料
+                entity.polygon.material = material;
+            }
+        }
+    </script>
 </body>
 
 </html>
