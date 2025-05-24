@@ -30,68 +30,42 @@
         justify-content: center;
         align-items: center;
         position: fixed;
+        left: 0px;
+        bottom: 0px;
+        width: 30px;
+        height: 30px;
+        background-color: #fff;
+        z-index: 999;
+        user-select: none;
+        cursor: pointer;
+    }
+
+    #select {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
         left: 10px;
         top: 10px;
-        width: 30px;
+        width: 300px;
         height: 30px;
-        background-color: #fff;
+        background-color: #ffffff66;
         z-index: 999;
         user-select: none;
         cursor: pointer;
-    }
-
-    #gkq {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        left: 50px;
-        top: 10px;
-        width: 30px;
-        height: 30px;
-        background-color: #fff;
-        z-index: 999;
-        user-select: none;
-        cursor: pointer;
-    }
-
-    #hx {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        left: 90px;
-        top: 10px;
-        width: 30px;
-        height: 30px;
-        background-color: #fff;
-        z-index: 999;
-        user-select: none;
-        cursor: pointer;
-    }
-
-    #dyh {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        left: 130px;
-        top: 10px;
-        width: 30px;
-        height: 30px;
-        background-color: #fff;
-        z-index: 999;
-        user-select: none;
-        cursor: pointer;
+        font-size: 20px;
     }
 </style>
 
 <body>
     <div id="cesiumContainer"></div>
     <div id="home">🏠</div>
-    <div id="gkq">管</div>
-    <div id="hx">红</div>
-    <div id="dyh">运</div>
+
+    <div id="select">
+        <input type="checkbox" value="sleep" name="hobby" id="gkq" checked />管控区
+        <input type="checkbox" value="code" name="hobby" id="hx" checked />红线
+        <input type="checkbox" value="chat" name="hobby" id="dyh" checked />大运河
+    </div>
 
     <script>
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzljYzAwNi03MDM2LTRkNzAtOTU5MS1lMDk4ZDc4YjQyZTMiLCJpZCI6Mzc4NzAsImlhdCI6MTYwNTY2MjY1MH0.A7BBr5K2nZNRjJls6uFc5elvf5FMFWJuD6dozwLw5vY';
