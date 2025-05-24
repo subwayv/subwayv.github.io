@@ -64,15 +64,7 @@
             },
         });
 
-        let tdtKey = 'b6b5170fae0041575cd409e2e372fb6d';
-        viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
-            url: "http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=" + tdtKey,
-            layer: "tdtBasicLayer",
-            style: "default",
-            format: "image/jpeg",
-            tileMatrixSetID: "GoogleMapsCompatible",
-            show: false
-        }));
+       
         const gkq = viewer.dataSources.add(Cesium.KmlDataSource.load('./生态空间管控区.kml', {
             camera: viewer.scene.camera,
             canvas: viewer.scene.canvas,
