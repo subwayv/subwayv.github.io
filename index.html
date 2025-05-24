@@ -45,7 +45,7 @@
             fullscreenButton: false,   // 全屏
             infoBox: true,     //单击信息框
             vrButton: false,  // VR
-            sceneMode: Cesium.SceneMode.SCENE2D
+            // sceneMode: Cesium.SceneMode.SCENE2D
             // terrainProvider: Cesium.createWorldTerrain()    //开启三维地形
         };
         //构建cesium基础应用
@@ -54,6 +54,10 @@
         viewer.scene.globe.enableLighting = false;
         //去除版权信息
         viewer.cesiumWidget.creditContainer.style.display = "none";
+        let currentMap = new Cesium.UrlTemplateImageryProvider({
+            url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+        });
+        layer = viewer.imageryLayers.addImageryProvider(currentMap);
         //将初始视角定到中国
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 2000),
@@ -64,7 +68,7 @@
             },
         });
 
-       
+
         const gkq = viewer.dataSources.add(Cesium.KmlDataSource.load('./生态空间管控区.kml', {
             camera: viewer.scene.camera,
             canvas: viewer.scene.canvas,
@@ -73,22 +77,10 @@
         // 获取所有从KML加载的实体
         const entities = gkq.entities.values;
         console.log(entities);
-        
 
-        // 遍历每个实体进行样式更改
-        for (let i = 0; i < entities.length; i++) {
-            const entity = entities[i];
-            console.log(i);
-            
 
-            if (entity.polygon) { // 检查实体是否包含多边形
-                // 创建新的材料实例
-                const material = Cesium.Color.RED.withAlpha(0.5); // 示例为红色半透明材质
 
-                // 设置多边形的材料
-                entity.polygon.material = material;
-            }
-        }
+
     </script>
 </body>
 
