@@ -64,11 +64,42 @@
         top: 10px;
         width: 300px;
         height: 30px;
+        margin: 0 auto;
         background-color: #ffffff66;
         z-index: 999;
         user-select: none;
         cursor: pointer;
         font-size: 20px;
+    }
+
+    #place {
+        position: fixed;
+        left: 10px;
+        top: 100px;
+        background-color: #ffffff66;
+        z-index: 999;
+        user-select: none;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    #place {
+        text-align: center;
+    }
+
+    #myLongitude,
+    #myLatitude {
+        width: 300px;
+        height: 30px;
+        text-align: center;
+    }
+
+    #findPlace {
+        width: 300px;
+        height: 30px;
+        background-color: gray;
+        text-align: center;
+        margin: 0 auto;
     }
 </style>
 
@@ -81,6 +112,12 @@
         <input type="checkbox" value="sleep" name="hobby" id="gkq" checked />管控区
         <input type="checkbox" value="code" name="hobby" id="hx" checked />红线
         <input type="checkbox" value="chat" name="hobby" id="dyh" checked />大运河
+    </div>
+
+    <div id="place">
+        <div><input type="text" id="myLongitude" placeholder="请输入经度"></div>
+        <div><input type="text" id="myLatitude" placeholder="请输入纬度"></div>
+        <div id="findPlace">查找</div>
     </div>
 
     <script>
@@ -257,6 +294,24 @@
 
         document.getElementById('locate').addEventListener('click', () => {
             getLocation();
+        })
+
+        document.getElementById("findPlace").addEventListener('click', () => {
+            const longitude = document.getElementById("myLongitude").value;
+            const latitude = document.getElementById("myLatitude").value;
+
+            viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1000) });
+            viewer.entities.removeAll();
+            viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
+                point: {
+                    pixelSize: 10,
+                    color: Cesium.Color.fromCssColorString('#ff0000'),
+                    outlineColor: Cesium.Color.fromCssColorString('#ff0000'),
+                    outlineWidth: 2,
+                    show: true
+                }
+            });
         })
 
 
