@@ -40,6 +40,21 @@
         cursor: pointer;
     }
 
+    #locate {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        left: 50px;
+        bottom: 0px;
+        width: 30px;
+        height: 30px;
+        background-color: #fff;
+        z-index: 999;
+        user-select: none;
+        cursor: pointer;
+    }
+
     #select {
         display: flex;
         justify-content: center;
@@ -60,6 +75,7 @@
 <body>
     <div id="cesiumContainer"></div>
     <div id="home">🏠</div>
+    <div id="locate">位</div>
 
     <div id="select">
         <input type="checkbox" value="sleep" name="hobby" id="gkq" checked />管控区
@@ -239,6 +255,52 @@
             }
         });
 
+        document.getElementById('locate').addEventListener('click', () => {
+            getLocation();
+        })
+
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                console.log("该浏览器不支持获取地理位置。");
+            }
+        }
+
+        function showPosition(position) {
+            const longitude = position.coords.longitude;
+            const latitude = position.coords.latitude;
+            viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1000) });
+            viewer.entities.removeAll();
+            viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
+                point: {
+                    pixelSize: 10,
+                    color: Cesium.Color.fromCssColorString('#ff0000'),
+                    outlineColor: Cesium.Color.fromCssColorString('#ff0000'),
+                    outlineWidth: 2,
+                    show: true
+                }
+            });
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    console.log("用户拒绝对获取地理位置的请求。");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    console.log("位置信息是不可用的。");
+                    break;
+                case error.TIMEOUT:
+                    console.log("请求用户地理位置超时。");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    console.log("未知错误。");
+                    break;
+            }
+        }
 
 
     </script>
