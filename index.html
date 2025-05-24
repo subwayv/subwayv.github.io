@@ -26,8 +26,56 @@
     }
 
     #home {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         position: fixed;
         left: 10px;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        background-color: #fff;
+        z-index: 999;
+        user-select: none;
+        cursor: pointer;
+    }
+
+    #gkq {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        left: 50px;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        background-color: #fff;
+        z-index: 999;
+        user-select: none;
+        cursor: pointer;
+    }
+
+    #hx {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        left: 90px;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        background-color: #fff;
+        z-index: 999;
+        user-select: none;
+        cursor: pointer;
+    }
+
+    #dyh {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        left: 130px;
         top: 10px;
         width: 30px;
         height: 30px;
@@ -41,6 +89,9 @@
 <body>
     <div id="cesiumContainer"></div>
     <div id="home">🏠</div>
+    <div id="gkq">1</div>
+    <div id="hx">2</div>
+    <div id="dyh">3</div>
 
     <script>
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzljYzAwNi03MDM2LTRkNzAtOTU5MS1lMDk4ZDc4YjQyZTMiLCJpZCI6Mzc4NzAsImlhdCI6MTYwNTY2MjY1MH0.A7BBr5K2nZNRjJls6uFc5elvf5FMFWJuD6dozwLw5vY';
@@ -98,6 +149,7 @@
         }
 
         const gkqUrl = './data/生态空间管控区.kml';
+        let gkq; let gkqVisible = false;
         Cesium.KmlDataSource.load(gkqUrl, option).then(function (dataSource) {
             var entities = dataSource.entities.values;
             for (var i = 0; i < entities.length; i++) {
@@ -108,6 +160,8 @@
                 }
             }
             viewer.dataSources.add(dataSource);
+            gkq = dataSource;
+            gkqVisible = true;
         });
 
         // 红线
@@ -118,10 +172,11 @@
         const jdhx = './data/江都红线.kml';
         const jjkfqhx = './data/经济开发区红线.kml';
         const yzhx = './data/仪征红线.kml';
-        const hx = [byhx, gyhx, glhx, hjhx, jdhx, jjkfqhx, yzhx];
+        const hxs = [byhx, gyhx, glhx, hjhx, jdhx, jjkfqhx, yzhx];
 
+        let hx = []; let hxVisible = false;
         for (let i = 0; i < 7; i++) {
-            Cesium.KmlDataSource.load(hx[i], option).then(function (dataSource) {
+            Cesium.KmlDataSource.load(hxs[i], option).then(function (dataSource) {
                 var entities = dataSource.entities.values;
                 for (var i = 0; i < entities.length; i++) {
                     var entity = entities[i];
@@ -131,11 +186,14 @@
                     }
                 }
                 viewer.dataSources.add(dataSource);
+                hx.push(dataSource);
+                hxVisible = true;
             });
         }
 
         // 大运河核心监控区
         const dyhUrl = './data/大运河核心监控区.kml';
+        let dyh; let dyhVisible = false;
         Cesium.KmlDataSource.load(dyhUrl, option).then(function (dataSource) {
             var entities = dataSource.entities.values;
             for (var i = 0; i < entities.length; i++) {
@@ -146,6 +204,8 @@
                 }
             }
             viewer.dataSources.add(dataSource);
+            dyh = dataSource;
+            dyhVisible = true;
         });
 
 
@@ -154,7 +214,56 @@
 
         function back() {
             viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 100000) });
+
         }
+
+        // 控制管控区显示
+        document.getElementById('gkq').addEventListener('click', () => {
+            if (gkqVisible) {
+                viewer.dataSources.remove(gkq);
+                gkqVisible = false;
+                return;
+            }
+            if (!gkqVisible) {
+                viewer.dataSources.add(gkq);
+                gkqVisible = true;
+                return;
+            }
+        });
+
+        // 控制红线显示
+        document.getElementById('hx').addEventListener('click', () => {
+
+            if (hxVisible) {
+                for (let i = 0; i < 7; i++) {
+                    viewer.dataSources.remove(hx[i]);
+                }
+                hxVisible = false;
+                return;
+            }
+            if (!hxVisible) {
+                for (let i = 0; i < 7; i++) {
+                    viewer.dataSources.add(hx[i]);
+                }
+                hxVisible = true;
+                return;
+            }
+        });
+
+        // 控制大运河显示
+        document.getElementById('dyh').addEventListener('click', () => {
+
+            if (dyhVisible) {
+                viewer.dataSources.remove(dyh);
+                dyhVisible = false;
+                return;
+            }
+            if (!dyhVisible) {
+                viewer.dataSources.add(dyh);
+                dyhVisible = true;
+                return;
+            }
+        });
 
 
 
