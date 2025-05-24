@@ -13,29 +13,25 @@
 
 </head>
 <style>
-    /* 处理浏览器侧边距、滚动条 */
     html,
     body {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
-
     }
 
-    /* cesium容器全屏 */
     #cesiumContainer {
-
         height: 100%;
     }
 </style>
 
 <body>
-    <!-- cesium容器 -->
     <div id="cesiumContainer"></div>
+
     <script>
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzljYzAwNi03MDM2LTRkNzAtOTU5MS1lMDk4ZDc4YjQyZTMiLCJpZCI6Mzc4NzAsImlhdCI6MTYwNTY2MjY1MH0.A7BBr5K2nZNRjJls6uFc5elvf5FMFWJuD6dozwLw5vY';
-        //cesium设置项
+
         let options = {
             geocoder: false,   // 位置查找工具
             homeButton: false,  // 视角返回初始位置
@@ -50,34 +46,36 @@
             sceneMode: Cesium.SceneMode.SCENE2D
             // terrainProvider: Cesium.createWorldTerrain()    //开启三维地形
         };
-        //构建cesium基础应用
+
         const viewer = new Cesium.Viewer('cesiumContainer', options);
-        //开启光照效果
-        viewer.scene.globe.enableLighting = false;
         //去除版权信息
         viewer.cesiumWidget.creditContainer.style.display = "none";
+        // 抗锯齿
+        viewer.scene.postProcessStages.fxaa.enabled = false;
 
-        let webKey = '9145d3e317885a34666e5beb1fcacf71';
+        // 天地图影像
+        const tdtKey = '9145d3e317885a34666e5beb1fcacf71';
         viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
-            url: "https://t0.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=" + webKey,
+            url: "https://t0.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=" + tdtKey,
             layer: "tdtBasicLayer",
             style: "default",
             format: "image/jpeg",
             tileMatrixSetID: "GoogleMapsCompatible",
-            show: false
+            maximumLevel: 18,
         }));
 
+        // 天地图影像注记
+        viewer.imageryLayers.add(new Cesium.ImageryLayer(new Cesium.WebMapTileServiceImageryProvider({
+            url: "https://t0.tianditu.gov.cn/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=" + tdtKey,
+            layer: "tdtBasicLayer",
+            style: "default",
+            format: "image/jpeg",
+            tileMatrixSetID: "GoogleMapsCompatible",
+            maximumLevel: 18,
+        })));
 
-        //将初始视角定到中国
-        viewer.camera.setView({
-            destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 2000),
-            orientation: {
-                heading: Cesium.Math.toRadians(348.4202942851978),
-                pitch: Cesium.Math.toRadians(-89.74026687972041),
-                roll: Cesium.Math.toRadians(0)
-            },
-        });
-
+        //将初始视角定到扬州
+        viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 100000) });
 
         // 管控区
         const option = {
@@ -86,13 +84,13 @@
             clampToGround: true,
         }
 
-        const gkqUrl = './生态空间管控区.kml';
+        const gkqUrl = './data/生态空间管控区.kml';
         Cesium.KmlDataSource.load(gkqUrl, option).then(function (dataSource) {
             var entities = dataSource.entities.values;
             for (var i = 0; i < entities.length; i++) {
                 var entity = entities[i];
                 if (entity.polygon) {
-                    entity.polygon.material = Cesium.Color.YELLOW.withAlpha(0.25);
+                    entity.polygon.material = Cesium.Color.YELLOW.withAlpha(0.4);
                     entity.polygon.heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
                 }
             }
@@ -100,13 +98,13 @@
         });
 
         // 红线
-        const byhx = './宝应红线.kml';
-        const gyhx = './高邮红线.kml';
-        const glhx = './广陵红线.kml';
-        const hjhx = './邗江红线.kml';
-        const jdhx = './江都红线.kml';
-        const jjkfqhx = './经济开发区红线.kml';
-        const yzhx = './仪征红线.kml';
+        const byhx = './data/宝应红线.kml';
+        const gyhx = './data/高邮红线.kml';
+        const glhx = './data/广陵红线.kml';
+        const hjhx = './data/邗江红线.kml';
+        const jdhx = './data/江都红线.kml';
+        const jjkfqhx = './data/经济开发区红线.kml';
+        const yzhx = './data/仪征红线.kml';
         const hx = [byhx, gyhx, glhx, hjhx, jdhx, jjkfqhx, yzhx];
 
         for (let i = 0; i < 7; i++) {
@@ -115,7 +113,7 @@
                 for (var i = 0; i < entities.length; i++) {
                     var entity = entities[i];
                     if (entity.polygon) {
-                        entity.polygon.material = Cesium.Color.RED.withAlpha(0.25);
+                        entity.polygon.material = Cesium.Color.RED.withAlpha(0.4);
                         entity.polygon.heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
                     }
                 }
@@ -124,13 +122,13 @@
         }
 
         // 大运河核心监控区
-        const dyhUrl = './大运河核心监控区.kml';
+        const dyhUrl = './data/大运河核心监控区.kml';
         Cesium.KmlDataSource.load(dyhUrl, option).then(function (dataSource) {
             var entities = dataSource.entities.values;
             for (var i = 0; i < entities.length; i++) {
                 var entity = entities[i];
                 if (entity.polygon) {
-                    entity.polygon.material = Cesium.Color.GREEN.withAlpha(0.25);
+                    entity.polygon.material = Cesium.Color.GREEN.withAlpha(0.4);
                     entity.polygon.heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
                 }
             }
