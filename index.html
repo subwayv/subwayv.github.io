@@ -9,6 +9,7 @@
     <!-- cdn方式引入cesium -->
     <script src="./cesium/Build/Cesium/Cesium.js"></script>
     <link href="./cesium/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script src="./function/getLocation.js"></script>
 </head>
 
 </head>
@@ -25,34 +26,38 @@
         height: 100%;
     }
 
-    #home {
+    #rightMenu {
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column;
+        justify-content: space-evenly;
         position: fixed;
-        left: 0px;
-        bottom: 0px;
+        right: 0;
+        bottom: 100px;
         width: 30px;
-        height: 30px;
-        background-color: #fff;
-        z-index: 999;
-        user-select: none;
-        cursor: pointer;
+        height: 300px;
+        background-color: transparent;
     }
 
-    #locate {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        left: 50px;
-        bottom: 0px;
+    #layer,
+    #origin,
+    #position {
         width: 30px;
         height: 30px;
-        background-color: #fff;
-        z-index: 999;
-        user-select: none;
-        cursor: pointer;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: #edffffee;
+    }
+
+    #layer {
+        background-image: url("./images/layer.svg");
+    }
+
+    #origin {
+        background-image: url("./images/origin.svg");
+    }
+
+    #position {
+        background-image: url("./images/position.svg");
     }
 
     #select {
@@ -71,42 +76,17 @@
         cursor: pointer;
         font-size: 20px;
     }
-
-    #place {
-        position: fixed;
-        left: 10px;
-        top: 100px;
-        background-color: #ffffff66;
-        z-index: 999;
-        user-select: none;
-        cursor: pointer;
-        font-size: 20px;
-    }
-
-    #place {
-        text-align: center;
-    }
-
-    #myLongitude,
-    #myLatitude {
-        width: 300px;
-        height: 30px;
-        text-align: center;
-    }
-
-    #findPlace {
-        width: 300px;
-        height: 30px;
-        background-color: gray;
-        text-align: center;
-        margin: 0 auto;
-    }
 </style>
 
 <body>
     <div id="cesiumContainer"></div>
-    <div id="home">🏠</div>
-    <div id="locate">位</div>
+
+    <div id="rightMenu">
+        <div id="layer"></div>
+        <div id="origin"></div>
+        <div id="position"></div>
+    </div>
+
 
     <div id="select">
         <input type="checkbox" value="sleep" name="hobby" id="gkq" checked />管控区
@@ -114,11 +94,7 @@
         <input type="checkbox" value="chat" name="hobby" id="dyh" checked />大运河
     </div>
 
-    <div id="place">
-        <div><input type="text" id="myLongitude" placeholder="请输入经度"></div>
-        <div><input type="text" id="myLatitude" placeholder="请输入纬度"></div>
-        <div id="findPlace">查找</div>
-    </div>
+
 
     <script>
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzljYzAwNi03MDM2LTRkNzAtOTU5MS1lMDk4ZDc4YjQyZTMiLCJpZCI6Mzc4NzAsImlhdCI6MTYwNTY2MjY1MH0.A7BBr5K2nZNRjJls6uFc5elvf5FMFWJuD6dozwLw5vY';
@@ -237,7 +213,7 @@
 
 
 
-        document.getElementById('home').addEventListener('click', () => back());
+        document.getElementById('origin').addEventListener('click', () => back());
 
         function back() {
             viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(119.421003, 32.393159, 100000) });
@@ -292,70 +268,29 @@
             }
         });
 
-        document.getElementById('locate').addEventListener('click', () => {
+        document.getElementById('position').addEventListener('click', () => {
             getLocation();
         })
 
-        document.getElementById("findPlace").addEventListener('click', () => {
-            const longitude = document.getElementById("myLongitude").value;
-            const latitude = document.getElementById("myLatitude").value;
+        let selectShow = true;
+        document.getElementById('layer').addEventListener('click', () => {
+            if (selectShow) {
+                document.getElementById("select").style.display = "none";
+                selectShow = false;
+                return;
+            }
+            if (!selectShow) {
+                document.getElementById("select").style.display = "block";
+                selectShow = true;
+                return;
+            }
 
-            viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1000) });
-            viewer.entities.removeAll();
-            viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
-                point: {
-                    pixelSize: 10,
-                    color: Cesium.Color.fromCssColorString('#ff0000'),
-                    outlineColor: Cesium.Color.fromCssColorString('#ff0000'),
-                    outlineWidth: 2,
-                    show: true
-                }
-            });
         })
 
 
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                console.log("该浏览器不支持获取地理位置。");
-            }
-        }
 
-        function showPosition(position) {
-            const longitude = position.coords.longitude;
-            const latitude = position.coords.latitude;
-            viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1000) });
-            viewer.entities.removeAll();
-            viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
-                point: {
-                    pixelSize: 10,
-                    color: Cesium.Color.fromCssColorString('#ff0000'),
-                    outlineColor: Cesium.Color.fromCssColorString('#ff0000'),
-                    outlineWidth: 2,
-                    show: true
-                }
-            });
-        }
 
-        function showError(error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    console.log("用户拒绝对获取地理位置的请求。");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    console.log("位置信息是不可用的。");
-                    break;
-                case error.TIMEOUT:
-                    console.log("请求用户地理位置超时。");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    console.log("未知错误。");
-                    break;
-            }
-        }
+
 
 
     </script>
